@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEACET AI Assistant | SEA College of Engineering & Technology</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #1e3a8a;
+            background-color: #f3f4f6;
+        }
+
+        .app-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 100%;
+            max-width: 900px;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            margin: 2rem auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        h1 {
+            color: #1e3a8a;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-message, .user-message {
+            max-width: 80%;
+            padding: 12px 18px;
+            margin-bottom: 15px;
+            border-radius: 18px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background-color: #e3f2fd;
+            border-top-left-radius: 5px;
+            color: #1e3a8a;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #f97316;
+            color: white;
+            border-top-right-radius: 5px;
+        }
+
+        .message-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin-bottom: 5px;
+        }
+
+        .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .message-content th, .message-content td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .message-content th {
+            background-color: #f2f2f2;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        textarea {
+            flex: 1;
+            height: 60px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            resize: none;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        textarea:focus {
+            border-color: #f97316;
+        }
+
+        button {
+            background-color: #f97316;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background-color: #ea580c;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #f97316;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .suggestion-box {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border-left: 4px solid #f97316;
+        }
+
+        .suggestion-box p {
+            margin: 0 0 8px 0;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .suggestion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestion-tag {
+            background-color: #e3f2fd;
+            color: #1e3a8a;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-tag:hover {
+            background-color: #bbdefb;
+            transform: translateY(-2px);
+        }
+
+        .word-predictions {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px 8px 0 0;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            z-index: 10;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+
+        .word-prediction {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .word-prediction:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ea580c;
+        }
+
+        /* Animations */
+        .animate-fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 15px;
+                margin: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            textarea {
+                height: 50px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 0 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-poppins">
+    <!-- Header -->
+    <header class="sticky-top bg-white shadow-lg">
+        <nav class="navbar navbar-expand-lg navbar-light container">
+            <a class="navbar-brand flex items-center" href="index.html">
+                <img src="https://via.placeholder.com/50x50?text=SEACET" alt="SEACET Logo" class="logo w-12 h-12 mr-2">
+                <span class="font-bold text-xl text-blue-900">SEA College of Engineering</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto space-x-4">
+                    <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#courses">Courses</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#admissions">Admissions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#facilities">Facilities</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#placements">Placements</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#testimonials">Testimonials</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="chatbot.html">Chatbot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Chatbot Section -->
+    <section id="chatbot" class="py-16 bg-gray-100">
+        <div class="container">
+            <h2 class="text-3xl font-bold text-blue-900 text-center mb-8 animate-fade-in">SEACET AI Assistant</h2>
+            <div class="app-container animate-fade-in delay-200">
+                <div class="header">
+                    <img src="https://image3.mouthshut.com/images/imagesp/925718034s.jpg" alt="SEACET Logo" class="logo">
+                    <h1>SEACET College Assistant</h1>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-history" id="chatHistory">
+                        <!-- Chat messages will be dynamically added here -->
+                    </div>
+                    <div class="input-section">
+                        <div class="input-wrapper">
+                            <textarea id="userInput" placeholder="Type your question about SEACET here..." autocomplete="off"></textarea>
+                            <div id="wordPredictions" class="word-predictions"></div>
+                        </div>
+                        <button id="generateBtn"><i class="fas fa-paper-plane"></i> Send</button>
+                    </div>
+                </div>
+                <div class="loading" id="loadingIndicator" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Generating response...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white text-center py-6">
+        <div class="container">
+            <p>© 2025 SEA College of Engineering & Technology. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="#" class="text-white hover:text-orange-400 mx-2"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white hover:text-orange-400 mx-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white hover:text-orange-400 mx-2"><i class="fab fa-linkedin-in"></i></a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Highlight active nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Chatbot JavaScript
+            const generateBtn = document.getElementById('generateBtn');
+            const userInput = document.getElementById('userInput');
+            const chatHistory = document.getElementById('chatHistory');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const wordPredictions = document.getElementById('wordPredictions');
+
+            // SEACET Knowledge Base
+            const seacetInfo = {
+                about: {
+                    description: "South East Asian College of Engineering and Technology (SEACET) is a premier technical institution in Bangalore, dedicated to providing quality education in engineering and technology.",
+                    established: "2001",
+                    affiliation: "Affiliated to Visvesvaraya Technological University (VTU), Belagavi",
+                    accreditation: "Approved by AICTE, Recognized by Govt. of Karnataka",
+                    vision: "To be a global leader in technical education, fostering innovation and societal development.",
+                    mission: "To impart quality education, promote research, and develop skilled professionals with ethical values."
+                },
+                courses: {
+                    undergraduate: [
+                        { name: "B.E. Computer Science and Engineering", duration: "4 years", intake: 120 },
+                        { name: "B.E. Electronics and Communication Engineering", duration: "4 years", intake: 60 },
+                        { name: "B.E. Electrical and Electronics Engineering", duration: "4 years", intake: 60 },
+                        { name: "B.E. Mechanical Engineering", duration: "4 years", intake: 60 },
+                        { name: "B.E. Civil Engineering", duration: "4 years", intake: 60 }
+                    ],
+                    postgraduate: [
+                        { name: "M.E. Computer Science and Engineering", duration: "2 years", intake: 18 },
+                        { name: "M.E. Applied Electronics", duration: "2 years", intake: 18 },
+                        { name: "M.E. Power Electronics and Drives", duration: "2 years", intake: 18 },
+                        { name: "M.E. Structural Engineering", duration: "2 years", intake: 18 }
+                    ],
+                    diploma: [
+                        { name: "Diploma in Electrical and Electronics Engineering", duration: "3 years", intake: 60 },
+                        { name: "Diploma in Mechanical Engineering", duration: "3 years", intake: 60 }
+                    ]
+                },
+                departments: {
+                    cse: {
+                        name: "Computer Science and Engineering",
+                        faculty_count: 25,
+                        qualifications: "Ph.D., M.Tech with industry and research experience",
+                        labs: ["Advanced Computing Lab", "AI and ML Lab", "Data Science Lab", "Networking Lab"],
+                        specializations: ["Artificial Intelligence", "Machine Learning", "Data Science", "Cyber Security", "Cloud Computing"],
+                        programs: ["B.E. Computer Science and Engineering", "M.E. Computer Science and Engineering"],
+                        achievements: "Students have won national hackathons and published papers in reputed journals."
+                    },
+                    ece: {
+                        name: "Electronics and Communication Engineering",
+                        faculty_count: 20,
+                        qualifications: "Ph.D., M.Tech with research publications",
+                        labs: ["VLSI Lab", "Embedded Systems Lab", "Communication Systems Lab", "DSP Lab"],
+                        specializations: ["VLSI Design", "Embedded Systems", "Wireless Communication", "Signal Processing"],
+                        programs: ["B.E. Electronics and Communication Engineering", "M.E. Applied Electronics"],
+                        achievements: "Developed innovative IoT projects and collaborated with industry for research."
+                    },
+                    eee: {
+                        name: "Electrical and Electronics Engineering",
+                        faculty_count: 18,
+                        qualifications: "Ph.D., M.Tech with industry collaborations",
+                        labs: ["Power Systems Lab", "Control Systems Lab", "Renewable Energy Lab", "Electrical Machines Lab"],
+                        specializations: ["Power Systems", "Renewable Energy", "Control Systems", "Power Electronics"],
+                        programs: ["B.E. Electrical and Electronics Engineering", "M.E. Power Electronics and Drives", "Diploma in Electrical and Electronics Engineering"],
+                        achievements: "Implemented solar energy projects and secured research grants."
+                    },
+                    mech: {
+                        name: "Mechanical Engineering",
+                        faculty_count: 22,
+                        qualifications: "Ph.D., M.Tech with expertise in design and manufacturing",
+                        labs: ["Thermal Engineering Lab", "CAD/CAM Lab", "Automobile Lab", "Material Testing Lab"],
+                        specializations: ["Thermal Engineering", "Design Engineering", "Automobile Engineering", "Manufacturing"],
+                        programs: ["B.E. Mechanical Engineering", "Diploma in Mechanical Engineering"],
+                        achievements: "Students designed award-winning prototypes for national competitions."
+                    },
+                    civil: {
+                        name: "Civil Engineering",
+                        faculty_count: 15,
+                        qualifications: "Ph.D., M.Tech with consultancy experience",
+                        labs: ["Structural Engineering Lab", "Geotechnical Lab", "Environmental Engineering Lab", "Surveying Lab"],
+                        specializations: ["Structural Engineering", "Environmental Engineering", "Transportation Engineering", "Geotechnical Engineering"],
+                        programs: ["B.E. Civil Engineering", "M.E. Structural Engineering"],
+                        achievements: "Contributed to sustainable infrastructure projects in Bangalore."
+                    }
+                },
+                admissions: {
+                    eligibility: {
+                        ug: "Pass in 10+2/PUC with Physics, Mathematics, and Chemistry/Biology/Computer Science with minimum 45% marks",
+                        pg: "B.E./B.Tech in relevant discipline with minimum 50% marks",
+                        diploma: "SSLC/10th standard pass with minimum 35% marks"
+                    },
+                    process: "Admissions through KCET (Karnataka CET), COMED-K for UG; PGCET for PG; DCET for Diploma. Management quota seats also available.",
+                    important_dates: {
+                        application_start: "February",
+                        application_end: "April",
+                        entrance_exam: "KCET/COMED-K: April-May, PGCET: June"
+                    }
+                },
+                fees: {
+                    undergraduate: {
+                        tuition: "₹60,000 per year",
+                        other: "₹15,000 (exam, lab, library fees)",
+                        total: "₹75,000 per year approx."
+                    },
+                    postgraduate: {
+                        tuition: "₹55,000 per year",
+                        other: "₹15,000 (exam, lab, library fees)",
+                        total: "₹70,000 per year approx."
+                    },
+                    diploma: {
+                        tuition: "₹40,000 per year",
+                        other: "₹10,000 (exam, lab fees)",
+                        total: "₹50,000 per year approx."
+                    },
+                    hostel: {
+                        accommodation: "₹30,000 per year",
+                        food: "₹20,000 per year",
+                        total: "₹50,000 per year"
+                    },
+                    payment: "Fees can be paid in 2-3 installments per year",
+                    scholarships: [
+                        "Government scholarships for SC/ST/OBC categories",
+                        "Merit-based scholarships for top KCET/COMED-K rank holders",
+                        "Financial aid for economically weaker sections"
+                    ]
+                },
+                faculty: {
+                    total_count: 100,
+                    qualifications: "Majority hold Ph.D. or M.Tech degrees with significant academic and industry experience",
+                    principal: {
+                        name: "Dr. S. Rajesh",
+                        qualification: "Ph.D. in Computer Science",
+                        principal_experience: "25 years in technical education",
+                        achievements: "Published 50+ research papers, guided 15 Ph.D. scholars"
+                    }
+                },
+                facilities: {
+                    academic: [
+                        "Smart classrooms with projectors and digital boards",
+                        "Well-equipped labs for all departments",
+                        "Central library with 50,000+ books, e-journals, and digital resources",
+                        "Computer center with high-speed internet"
+                    ],
+                    hostel: [
+                        "Separate hostels for boys and girls with 24/7 security",
+                        "Wi-Fi enabled rooms and common areas",
+                        "Mess with vegetarian and non-vegetarian food options",
+                        "Recreation rooms with TV and indoor games"
+                    ],
+                    sports: [
+                        "Outdoor sports facilities: Cricket, Football, Basketball, Volleyball",
+                        "Indoor games: Table Tennis, Chess, Carrom",
+                        "Gymnasium with modern equipment"
+                    ],
+                    other: [
+                        "On-campus medical center with first aid and doctor visits",
+                        "Cafeteria serving diverse food options",
+                        "Transport facilities connecting major areas of Bangalore",
+                        "Bank and ATM services on campus"
+                    ]
+                },
+                placements: {
+                    stats: {
+                        "2023": "85% placement rate",
+                        "2022": "82% placement rate",
+                        "2021": "80% placement rate"
+                    },
+                    companies: [
+                        "Infosys", "Wipro", "TCS", "Accenture",
+                        "IBM", "Cisco", "Bosch", "L&T Infotech",
+                        "Honeywell", "Capgemini", "Mindtree", "Tech Mahindra"
+                    ],
+                    highest_package: "₹12 LPA (2023)",
+                    average_package: "₹4.8 LPA",
+                    training: [
+                        "Aptitude and soft skills training",
+                        "Technical workshops and coding bootcamps",
+                        "Mock interviews and GD sessions",
+                        "Resume building and career counseling"
+                    ]
+                },
+                events: {
+                    technical: [
+                        "TECHNOVIA: Annual technical symposium with paper presentations and project exhibitions",
+                        "Hackathons and coding competitions",
+                        "Workshops by industry experts",
+                        "Robotics and IoT competitions"
+                    ],
+                    cultural: [
+                        "RHYTHM: Annual cultural fest with music, dance, and drama",
+                        "Literary events: Debates, Quiz, and Creative Writing",
+                        "Art and photography exhibitions",
+                        "Fashion shows and talent hunts"
+                    ],
+                    other: [
+                        "Annual Sports Meet with inter-college competitions",
+                        "Alumni Meet and networking events",
+                        "Industry visits and internships",
+                        "Community service and NSS activities"
+                    ]
+                },
+                contact: {
+                    address: "South East Asian College of Engineering and Technology, Electronics City Phase 1, Bangalore - 560100, Karnataka, India",
+                    phone: "+91-80-25741359, +91-80-25740676",
+                    email: "info@seacet.edu.in, admissions@seacet.edu.in",
+                    website: "https://seacet.edu.in",
+                    social: {
+                        facebook: "https://facebook.com/seacet",
+                        twitter: "https://twitter.com/seacet",
+                        linkedin: "https://linkedin.com/school/seacet"
+                    }
+                }
+            };
+
+            // Enhanced Word Prediction Database
+            const predictionDatabase = [
+                { trigger: "hi", suggestions: ["Hi, how can I help you with SEACET?", "Hi, what courses are offered?", "Hi, tell me about placements"] },
+                { trigger: "what", suggestions: ["What are the B.E. courses offered?", "What is the admission process?", "What facilities are available?"] },
+                { trigger: "how", suggestions: ["How much are the tuition fees?", "How to apply for admission?", "How is the placement record?"] },
+                { trigger: "when", suggestions: ["When does admission start?", "When is the technical fest?", "When are exams conducted?"] },
+                { trigger: "who", suggestions: ["Who is the principal?", "Who are the faculty in CSE?", "Who can apply for scholarships?"] },
+                { trigger: "course", suggestions: ["What engineering courses are offered?", "Which postgraduate courses are available?", "What are the diploma courses?"] },
+                { trigger: "fee", suggestions: ["What is the fee structure for B.E.?", "How much are hostel fees?", "Are scholarships available?"] },
+                { trigger: "admission", suggestions: ["What is the admission process for B.E.?", "What are the eligibility criteria?", "When is the last date to apply?"] },
+                { trigger: "faculty", suggestions: ["How many faculty in Computer Science?", "What are the qualifications of ECE faculty?", "Who is the principal of SEACET?"] },
+                { trigger: "placement", suggestions: ["What is the placement percentage?", "Which companies visit SEACET?", "What is the highest salary package?"] },
+                { trigger: "hostel", suggestions: ["What facilities are in the hostel?", "How much is the hostel fee?", "Is food included in hostel charges?"] },
+                { trigger: "facility", suggestions: ["What are the campus facilities?", "Is there a library at SEACET?", "What sports facilities are available?"] },
+                { trigger: "event", suggestions: ["What is TECHNOVIA?", "When is the RHYTHM fest?", "Are there hackathons at SEACET?"] },
+                { trigger: "contact", suggestions: ["What is the college address?", "How to contact the admission office?", "What is SEACET's email?"] },
+                { trigger: "about", suggestions: ["Tell me about SEACET", "When was SEACET established?", "Is SEACET affiliated to VTU?"] },
+                { trigger: "department", suggestions: ["Tell me about the CSE department", "What labs are in the ECE department?", "How many faculty in Mechanical?"] },
+                { trigger: "cse", suggestions: ["What programs are offered by CSE?", "What are the CSE department labs?", "Who are the faculty in CSE?"] },
+                { trigger: "ece", suggestions: ["What specializations in ECE?", "What labs does ECE have?", "Tell me about the ECE department"] },
+                { trigger: "eee", suggestions: ["What courses in EEE?", "What are the EEE department achievements?", "What labs in EEE?"] },
+                { trigger: "mech", suggestions: ["Tell me about Mechanical Engineering", "What labs are in Mechanical?", "What are Mechanical department programs?"] },
+                { trigger: "civil", suggestions: ["What is the Civil department known for?", "What labs in Civil Engineering?", "What programs in Civil?"] }
+            ];
+
+            // Initialize chat with welcome message
+            initializeChat();
+
+            // Generate button click event
+            generateBtn.addEventListener('click', generateResponse);
+
+            // Handle Enter key press
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    generateResponse();
+                }
+            });
+
+            // Enhanced word prediction as user types
+            userInput.addEventListener('input', function() {
+                const inputText = userInput.value.toLowerCase().trim();
+                if (inputText.length < 2) {
+                    wordPredictions.style.display = 'none';
+                    return;
+                }
+
+                const matchedPredictions = predictionDatabase
+                    .filter(item => item.trigger.startsWith(inputText) || inputText.includes(item.trigger))
+                    .flatMap(item => item.suggestions)
+                    .filter((value, index, self) => self.indexOf(value) === index);
+
+                if (matchedPredictions.length > 0) {
+                    wordPredictions.innerHTML = '';
+                    matchedPredictions.slice(0, 5).forEach(prediction => {
+                        const predElement = document.createElement('div');
+                        predElement.className = 'word-prediction';
+                        predElement.textContent = prediction;
+                        predElement.addEventListener('click', function() {
+                            userInput.value = prediction;
+                            wordPredictions.style.display = 'none';
+                            userInput.focus();
+                        });
+                        wordPredictions.appendChild(predElement);
+                    });
+                    wordPredictions.style.display = 'block';
+                } else {
+                    wordPredictions.style.display = 'none';
+                }
+            });
+
+            // Hide predictions when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (e.target !== userInput && !wordPredictions.contains(e.target)) {
+                    wordPredictions.style.display = 'none';
+                }
+            });
+
+            function initializeChat() {
+                addMessage(`Welcome to SEACET College Assistant! I'm here to help with all your queries about:
+                    <ul>
+                        <li><strong>Courses:</strong> Undergraduate, Postgraduate, Diploma programs</li>
+                        <li><strong>Departments:</strong> CSE, ECE, EEE, Mechanical, Civil</li>
+                        <li><strong>Admissions:</strong> Eligibility, process, important dates</li>
+                        <li><strong>Fees:</strong> Tuition, hostel, scholarships</li>
+                        <li><strong>Placements:</strong> Companies, packages, training</li>
+                        <li><strong>Facilities:</strong> Labs, library, hostels, sports</li>
+                        <li><strong>Events:</strong> Technical fests, cultural activities</li>
+                    </ul>
+                    <div class="suggestion-box">
+                        <p>Try asking:</p>
+                        <div class="suggestion-tags">
+                            <span class="suggestion-tag">What are the B.E. courses offered?</span>
+                            <span class="suggestion-tag">Tell me about the CSE department</span>
+                            <span class="suggestion-tag">What is the placement record?</span>
+                            <span class="suggestion-tag">What facilities are in the hostel?</span>
+                        </div>
+                    </div>`, 'ai');
+            }
+
+            function generateResponse() {
+                const inputText = userInput.value.trim();
+                if (!inputText) {
+                    return;
+                }
+
+                addMessage(inputText, 'user');
+                userInput.value = '';
+                wordPredictions.style.display = 'none';
+
+                loadingIndicator.style.display = 'flex';
+
+                setTimeout(() => {
+                    let response = getSeacetResponse(inputText);
+                    loadingIndicator.style.display = 'none';
+                    addMessage(response, 'ai');
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                }, 800 + Math.random() * 800);
+            }
+
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `${sender}-message`;
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                if (typeof text === 'string' && (text.includes('<ul>') || text.includes('<table>'))) {
+                    contentDiv.innerHTML = text;
+                } else {
+                    contentDiv.textContent = text;
+                }
+                messageDiv.appendChild(contentDiv);
+                chatHistory.appendChild(messageDiv);
+            }
+
+            function getSeacetResponse(input) {
+                const lowerInput = input.toLowerCase();
+                if (lowerInput.includes('about') || lowerInput.includes('college') || lowerInput.includes('seacet') || lowerInput.includes('information')) {
+                    return `SEACET College Information:
+                        <ul>
+                            <li><strong>Description:</strong> ${seacetInfo.about.description}</li>
+                            <li><strong>Established:</strong> ${seacetInfo.about.established}</li>
+                            <li><strong>Affiliation:</strong> ${seacetInfo.about.affiliation}</li>
+                            <li><strong>Accreditation:</strong> ${seacetInfo.about.accreditation}</li>
+                            <li><strong>Vision:</strong> ${seacetInfo.about.vision}</li>
+                            <li><strong>Mission:</strong> ${seacetInfo.about.mission}</li>
+                        </ul>
+                        Would you like details about departments, courses, or facilities?`;
+                }
+                if (lowerInput.includes('department') || lowerInput.includes('dept')) {
+                    if (lowerInput.includes('cse') || lowerInput.includes('computer')) {
+                        const dept = seacetInfo.departments.cse;
+                        return `Computer Science and Engineering Department:
+                            <ul>
+                                <li><strong>Faculty:</strong> ${dept.faculty_count} members (${dept.qualifications})</li>
+                                <li><strong>Programs:</strong> ${dept.programs.join(', ')}</li>
+                                <li><strong>Labs:</strong> ${dept.labs.join(', ')}</li>
+                                <li><strong>Specializations:</strong> ${dept.specializations.join(', ')}</li>
+                                <li><strong>Achievements:</strong> ${dept.achievements}</li>
+                            </ul>
+                            Want more details about CSE courses or faculty?`;
+                    } else if (lowerInput.includes('ece') || lowerInput.includes('electronics')) {
+                        const dept = seacetInfo.departments.ece;
+                        return `Electronics and Communication Engineering Department:
+                            <ul>
+                                <li><strong>Faculty:</strong> ${dept.faculty_count} members (${dept.qualifications})</li>
+                                <li><strong>Programs:</strong> ${dept.programs.join(', ')}</li>
+                                <li><strong>Labs:</strong> ${dept.labs.join(', ')}</li>
+                                <li><strong>Specializations:</strong> ${dept.specializations.join(', ')}</li>
+                                <li><strong>Achievements:</strong> ${dept.achievements}</li>
+                            </ul>
+                            Want more details about ECE programs or research?`;
+                    } else if (lowerInput.includes('eee') || lowerInput.includes('electrical')) {
+                        const dept = seacetInfo.departments.eee;
+                        return `Electrical and Electronics Engineering Department:
+                            <ul>
+                                <li><strong>Faculty:</strong> ${dept.faculty_count} members (${dept.qualifications})</li>
+                                <li><strong>Programs:</strong> ${dept.programs.join(', ')}</li>
+                                <li><strong>Labs:</strong> ${dept.labs.join(', ')}</li>
+                                <li><strong>Specializations:</strong> ${dept.specializations.join(', ')}</li>
+                                <li><strong>Achievements:</strong> ${dept.achievements}</li>
+                            </ul>
+                            Interested in EEE labs or placement records?`;
+                    } else if (lowerInput.includes('mech') || lowerInput.includes('mechanical')) {
+                        const dept = seacetInfo.departments.mech;
+                        return `Mechanical Engineering Department:
+                            <ul>
+                                <li><strong>Faculty:</strong> ${dept.faculty_count} members (${dept.qualifications})</li>
+                                <li><strong>Programs:</strong> ${dept.programs.join(', ')}</li>
+                                <li><strong>Labs:</strong> ${dept.labs.join(', ')}</li>
+                                <li><strong>Specializations:</strong> ${dept.specializations.join(', ')}</li>
+                                <li><strong>Achievements:</strong> ${dept.achievements}</li>
+                            </ul>
+                            Want to know about Mechanical projects or faculty?`;
+                    } else if (lowerInput.includes('civil')) {
+                        const dept = seacetInfo.departments.civil;
+                        return `Civil Engineering Department:
+                            <ul>
+                                <li><strong>Faculty:</strong> ${dept.faculty_count} members (${dept.qualifications})</li>
+                                <li><strong>Programs:</strong> ${dept.programs.join(', ')}</li>
+                                <li><strong>Labs:</strong> ${dept.labs.join(', ')}</li>
+                                <li><strong>Specializations:</strong> ${dept.specializations.join(', ')}</li>
+                                <li><strong>Achievements:</strong> ${dept.achievements}</li>
+                            </ul>
+                            Curious about Civil department facilities or courses?`;
+                    } else {
+                        return `SEACET has the following departments:
+                            <ul>
+                                <li>Computer Science and Engineering (CSE)</li>
+                                <li>Electronics and Communication Engineering (ECE)</li>
+                                <li>Electrical and Electronics Engineering (EEE)</li>
+                                <li>Mechanical Engineering</li>
+                                <li>Civil Engineering</li>
+                            </ul>
+                            Please specify a department (e.g., "Tell me about CSE") for detailed information.`;
+                    }
+                }
+                if (lowerInput.includes('course') || lowerInput.includes('program') || lowerInput.includes('study') || lowerInput.includes('degree')) {
+                    let response = `<strong>Courses Offered at SEACET:</strong>
+                        <h4>Undergraduate (B.E.):</h4>
+                        <table>
+                            <tr><th>Course</th><th>Duration</th><th>Intake</th></tr>`;
+                    seacetInfo.courses.undergraduate.forEach(course => {
+                        response += `<tr><td>${course.name}</td><td>${course.duration}</td><td>${course.intake}</td></tr>`;
+                    });
+                    response += `</table>
+                        <h4>Postgraduate (M.E.):</h4>
+                        <table>
+                            <tr><th>Course</th><th>Duration</th><th>Intake</th></tr>`;
+                    seacetInfo.courses.postgraduate.forEach(course => {
+                        response += `<tr><td>${course.name}</td><td>${course.duration}</td><td>${course.intake}</td></tr>`;
+                    });
+                    response += `</table>
+                        <h4>Diploma:</h4>
+                        <table>
+                            <tr><th>Course</th><th>Duration</th><th>Intake</th></tr>`;
+                    seacetInfo.courses.diploma.forEach(course => {
+                        response += `<tr><td>${course.name}</td><td>${course.duration}</td><td>${course.intake}</td></tr>`;
+                    });
+                    response += `</table>
+                        Would you like details about a specific course or department?`;
+                    return response;
+                }
+                if (lowerInput.includes('admission') || lowerInput.includes('apply') || lowerInput.includes('eligibility') || lowerInput.includes('process')) {
+                    return `SEACET Admission Information:
+                        <h4>Eligibility:</h4>
+                        <ul>
+                            <li><strong>Undergraduate:</strong> ${seacetInfo.admissions.eligibility.ug}</li>
+                            <li><strong>Postgraduate:</strong> ${seacetInfo.admissions.eligibility.pg}</li>
+                            <li><strong>Diploma:</strong> ${seacetInfo.admissions.eligibility.diploma}</li>
+                        </ul>
+                        <h4>Process:</h4>
+                        <p>${seacetInfo.admissions.process}</p>
+                        <h4>Important Dates:</h4>
+                        <ul>
+                            <li>Application Start: ${seacetInfo.admissions.important_dates.application_start}</li>
+                            <li>Application End: ${seacetInfo.admissions.important_dates.application_end}</li>
+                            <li>Entrance Exam: ${seacetInfo.admissions.important_dates.entrance_exam}</li>
+                        </ul>
+                        Need more details about entrance exams or management quota?`;
+                }
+                if (lowerInput.includes('fee') || lowerInput.includes('cost') || lowerInput.includes('price') || lowerInput.includes('scholarship')) {
+                    return `SEACET Fee Structure:
+                        <h4>Undergraduate (B.E.):</h4>
+                        <ul>
+                            <li>Tuition: ${seacetInfo.fees.undergraduate.tuition}</li>
+                            <li>Other Fees: ${seacetInfo.fees.undergraduate.other}</li>
+                            <li>Total: ${seacetInfo.fees.undergraduate.total}</li>
+                        </ul>
+                        <h4>Postgraduate (M.E.):</h4>
+                        <ul>
+                            <li>Tuition: ${seacetInfo.fees.postgraduate.tuition}</li>
+                            <li>Other Fees: ${seacetInfo.fees.postgraduate.other}</li>
+                            <li>Total: ${seacetInfo.fees.postgraduate.total}</li>
+                        </ul>
+                        <h4>Diploma:</h4>
+                        <ul>
+                            <li>Tuition: ${seacetInfo.fees.diploma.tuition}</li>
+                            <li>Other Fees: ${seacetInfo.fees.diploma.other}</li>
+                            <li>Total: ${seacetInfo.fees.diploma.total}</li>
+                        </ul>
+                        <h4>Hostel:</h4>
+                        <ul>
+                            <li>Accommodation: ${seacetInfo.fees.hostel.accommodation}</li>
+                            <li>Food: ${seacetInfo.fees.hostel.food}</li>
+                            <li>Total: ${seacetInfo.fees.hostel.total}</li>
+                        </ul>
+                        <h4>Scholarships:</h4>
+                        <ul>${seacetInfo.fees.scholarships.map(sch => `<li>${sch}</li>`).join('')}</ul>
+                        Interested in scholarship eligibility or payment plans?`;
+                }
+                if (lowerInput.includes('faculty') || lowerInput.includes('teacher') || lowerInput.includes('professor') || lowerInput.includes('staff')) {
+                    return `SEACET Faculty Information:
+                        <ul>
+                            <li><strong>Total Faculty:</strong> ${seacetInfo.faculty.total_count}</li>
+                            <li><strong>Qualifications:</strong> ${seacetInfo.faculty.qualifications}</li>
+                            <li><strong>Principal:</strong> ${seacetInfo.faculty.principal.name}, ${seacetInfo.faculty.principal.qualification}, ${seacetInfo.faculty.principal.experience}. Achievements: ${seacetInfo.faculty.principal.achievements}</li>
+                        </ul>
+                        Want details about faculty in a specific department (e.g., CSE, ECE)?`;
+                }
+                if (lowerInput.includes('placement') || lowerInput.includes('company') || lowerInput.includes('package') || lowerInput.includes('job')) {
+                    return `SEACET Placement Information:
+                        <h4>Placement Statistics:</h4>
+                        <ul>
+                            <li>2023: ${seacetInfo.placements.stats["2023"]}</li>
+                            <li>2022: ${seacetInfo.placements.stats["2022"]}</li>
+                            <li>2021: ${seacetInfo.placements.stats["2021"]}</li>
+                        </ul>
+                        <h4>Top Recruiters:</h4>
+                        <p>${seacetInfo.placements.companies.join(', ')}</p>
+                        <h4>Packages:</h4>
+                        <ul>
+                            <li>Highest: ${seacetInfo.placements.highest_package}</li>
+                            <li>Average: ${seacetInfo.placements.average_package}</li>
+                        </ul>
+                        <h4>Training Programs:</h4>
+                        <ul>${seacetInfo.placements.training.map(t => `<li>${t}</li>`).join('')}</ul>
+                        Want to know about internship opportunities?`;
+                }
+                if (lowerInput.includes('facility') || lowerInput.includes('lab') || lowerInput.includes('library') || lowerInput.includes('hostel') || lowerInput.includes('campus')) {
+                    return `SEACET Campus Facilities:
+                        <h4>Academic:</h4>
+                        <ul>${seacetInfo.facilities.academic.map(f => `<li>${f}</li>`).join('')}</ul>
+                        <h4>Hostel:</h4>
+                        <ul>${seacetInfo.facilities.hostel.map(f => `<li>${f}</li>`).join('')}</ul>
+                        <h4>Sports:</h4>
+                        <ul>${seacetInfo.facilities.sports.map(f => `<li>${f}</li>`).join('')}</ul>
+                        <h4>Other:</h4>
+                        <ul>${seacetInfo.facilities.other.map(f => `<li>${f}</li>`).join('')}</ul>
+                        Need details about a specific facility?`;
+                }
+                if (lowerInput.includes('event') || lowerInput.includes('fest') || lowerInput.includes('activity') || lowerInput.includes('technical') || lowerInput.includes('cultural')) {
+                    return `SEACET Events:
+                        <h4>Technical:</h4>
+                        <ul>${seacetInfo.events.technical.map(e => `<li>${e}</li>`).join('')}</ul>
+                        <h4>Cultural:</h4>
+                        <ul>${seacetInfo.events.cultural.map(e => `<li>${e}</li>`).join('')}</ul>
+                        <h4>Other:</h4>
+                        <ul>${seacetInfo.events.other.map(e => `<li>${e}</li>`).join('')}</ul>
+                        Interested in upcoming events or participation details?`;
+                }
+                if (lowerInput.includes('contact') || lowerInput.includes('address') || lowerInput.includes('phone') || lowerInput.includes('email') || lowerInput.includes('location')) {
+                    return `SEACET Contact Information:
+                        <ul>
+                            <li><strong>Address:</strong> ${seacetInfo.contact.address}</li>
+                            <li><strong>Phone:</strong> ${seacetInfo.contact.phone}</li>
+                            <li><strong>Email:</strong> ${seacetInfo.contact.email}</li>
+                            <li><strong>Website:</strong> <a href="${seacetInfo.contact.website}" target="_blank">${seacetInfo.contact.website}</a></li>
+                            <li><strong>Social Media:</strong>
+                                <ul>
+                                    <li>Facebook: <a href="${seacetInfo.contact.social.facebook}" target="_blank">SEACET</a></li>
+                                    <li>Twitter: <a href="${seacetInfo.contact.social.twitter}" target="_blank">@seacet</a></li>
+                                    <li>LinkedIn: <a href="${seacetInfo.contact.social.linkedin}" target="_blank">SEACET</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        Need directions or department-specific contacts?`;
+                }
+                if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey') || lowerInput.includes('greet')) {
+                    return `Hi there! I'm the SEACET College Assistant. I can help with:
+                        <ul>
+                            <li>Department details (CSE, ECE, EEE, etc.)</li>
+                            <li>Courses and admissions</li>
+                            <li>Fees and scholarships</li>
+                            <li>Placements and companies</li>
+                            <li>Facilities and events</li>
+                        </ul>
+                        What would you like to explore today?`;
+                }
+                return `I can assist with all your questions about SEACET! Try asking about:
+                    <ul>
+                        <li>Departments (e.g., "Tell me about CSE")</li>
+                        <li>Courses (B.E., M.E., Diploma)</li>
+                        <li>Admissions and eligibility</li>
+                        <li>Fees and scholarships</li>
+                        <li>Placements and recruiters</li>
+                        <li>Campus facilities and hostels</li>
+                        <li>Events like TECHNOVIA or RHYTHM</li>
+                    </ul>
+                    Please provide more details or try a specific question!`;
+            }
+        });
+    </script>
+</body>
+</html>
